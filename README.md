@@ -1,2 +1,2 @@
 # ManifoldMatching
-Pytorch implementation of paper "Manifold Matching via Deep Metric Learning for Generative Modeling"
+A Pytorch implementation of paper "Manifold Matching via Deep Metric Learning for Generative Modeling"
