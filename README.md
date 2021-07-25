@@ -1,4 +1,4 @@
-# ManifoldMatching
+# Manifold Matching
 A Pytorch implementation of "Manifold Matching via Deep Metric Learning for Generative Modeling" (in ICCV 2021).
 
 Link to original paper: https://arxiv.org/abs/2106.10777
