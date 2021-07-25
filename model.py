@@ -50,7 +50,7 @@ class Discriminator64(nn.Module):
             nn.MaxPool2d(kernel_size=2, stride=2)
         )
 
-        self.features_to_prob = nn.Linear(512, out_dim)
+        self.features_to_prob = nn.Linear(16 * dim, out_dim)
 
 
     def forward(self, x):
