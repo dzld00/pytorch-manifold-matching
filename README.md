@@ -4,6 +4,35 @@ A Pytorch implementation of "Manifold Matching via Deep Metric Learning for Gene
 
 Link to original paper: https://arxiv.org/abs/2106.10777
 
+# Objective functions
+Objective for metric learning:
+```
+triplet_loss = triplet_(ml_real_out,ml_real_out_shuffle,ml_fake_out_shuffle)
+```
+Objective for manifold matching with learned metric:
+```
+g_loss = p_dist + c_dist 
+```
+where 
+```
+ml_real_out = ml_model(real_img) # metric learning network output from real data
+ml_fake_out = ml_model(fake_img) # metric learning network output from generated data 
+
+# shuffle in batch
+r1=torch.randperm(batch_size)
+r2=torch.randperm(batch_size)
+ml_real_out_shuffle = ml_real_out[r1[:, None]].view(ml_real_out.shape[0],ml_real_out.shape[-1])
+ml_fake_out_shuffle = ml_fake_out[r2[:, None]].view(ml_fake_out.shape[0],ml_fake_out.shape[-1])
+
+# pairwise distances 
+pd_r = pairwise_distances(ml_real_out, ml_real_out) 
+pd_f = pairwise_distances(ml_fake_out, ml_fake_out)
+ 
+# matching terms 
+p_dist =  torch.dist(pd_r,pd_f,2) # matching 2-diameters             
+c_dist = torch.dist(ml_real_out.mean(0),ml_fake_out.mean(0),2) # matching centroids  
+```
+
 # Dependencies
 - Pytorch 1.0.1
 
