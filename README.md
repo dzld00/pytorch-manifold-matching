@@ -1,8 +1,8 @@
-# Manifold Matching
-A Pytorch implementation of "Manifold Matching via Deep Metric Learning for Generative Modeling" (in ICCV 2021).
+# Manifold Matching via Deep Metric Learning for Generative Modeling
+A Pytorch implementation of "Manifold Matching via Deep Metric Learning for Generative Modeling" (ICCV 2021).
 ![](/images/pipeline.png)
 
-Link to original paper: https://arxiv.org/abs/2106.10777
+Paper: https://arxiv.org/abs/2106.10777
 
 # Objective functions
 Objective for metric learning:
