@@ -64,7 +64,7 @@ if __name__ == '__main__':
         os.makedirs(output_path)
     sample_path = output_path           
 
-    trainset = TrainDatasetFromFolder('/data/mendai/celeba_centercrop', size=SIZE)  
+    trainset = TrainDatasetFromFolder('/data/mendai/celeba', size=SIZE)  
     train_loader = torch.utils.data.DataLoader(trainset, batch_size=batch_size,
                                               shuffle=True, num_workers=8)
 
