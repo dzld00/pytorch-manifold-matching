@@ -22,6 +22,8 @@ from model import Generator64, Discriminator64
 
 
 parser = argparse.ArgumentParser(description='Train Image Generation Models')
+parser.add_argument('--data_path', default='/data/mendai/celeba', type=str, help='dataset path')
+parser.add_argument('--name', default='results', type=str, help='path to store results')
 parser.add_argument('--size', default=64, type=int, help='training images size')
 parser.add_argument('--out_dim', default=10, type=int, help='ML network output dim')
 parser.add_argument('--num_epochs', default=80, type=int, help='train epoch number')
@@ -36,7 +38,6 @@ parser.add_argument('--ml_model_name', default='', type=str, help='metric learni
 parser.add_argument('--margin', default=1, type=float, help='triplet loss margin')
 parser.add_argument('--alpha', default=1e-2, type=float, help='triplet loss direction guidance weight parameter')
 parser.add_argument('--n_threads', type=int, default=8)
-parser.add_argument('--name', default='celeba64', type=str)
 
 
 
@@ -56,15 +57,14 @@ if __name__ == '__main__':
     ML_MODEL_NAME = opt.ml_model_name
     margin = opt.margin
     alpha = opt.alpha
-    NAME = opt.name
     
     
-    output_path = '/data/mendai/MM/results/celeba/' + NAME 
+    output_path = opt.name 
     if not os.path.exists(output_path):
         os.makedirs(output_path)
     sample_path = output_path           
 
-    trainset = TrainDatasetFromFolder('/data/mendai/celeba', size=SIZE)  
+    trainset = TrainDatasetFromFolder(opt.data_path, size=SIZE)  
     train_loader = torch.utils.data.DataLoader(trainset, batch_size=batch_size,
                                               shuffle=True, num_workers=8)
 
@@ -91,7 +91,7 @@ if __name__ == '__main__':
         print("LOAD MODEL SUCCESSFULLY")
         
     
-    fixed_noise1 = gen_rand_noise(1).to(device) 
+    #fixed_noise1 = gen_rand_noise(1).to(device) 
 
     for epoch in range(1, NUM_EPOCHS + 1):
             
