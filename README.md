@@ -15,8 +15,8 @@ g_loss = p_dist + c_dist
 ```
 where 
 ```
-ml_real_out = ml_model(real_img) # metric learning network output from real data
-ml_fake_out = ml_model(fake_img) # metric learning network output from generated data 
+ml_real_out = netML(real_img) # real data
+ml_fake_out = netML(fake_img) # generated data 
 
 # shuffle in batch
 r1=torch.randperm(batch_size)
