@@ -78,8 +78,8 @@ if __name__ == '__main__':
     optimizerG = optim.Adam(netG.parameters(), lr = learning_rate, betas=(beta1,beta2),eps= 1e-6) 
     
     # ML
-    ml_model = ML64(out_dim=out_dim).to(device)      
-    optimizerML = optim.Adam(ml_model.parameters(), lr = learning_rate, betas=(0.5,0.999),eps= 1e-3)   
+    netML = ML64(out_dim=out_dim).to(device)      
+    optimizerML = optim.Adam(netML.parameters(), lr = learning_rate, betas=(0.5,0.999),eps= 1e-3)   
 
     # Losses    
     triplet_ = TripletLoss(margin, alpha).to(device)    
@@ -87,7 +87,7 @@ if __name__ == '__main__':
 
     if LOAD_MODEL == 'yes':
         netG.load_state_dict(remove_module_str_in_state_dict(torch.load(str(output_path + "/generator_latest.pt"))))
-        ml_model.load_state_dict(remove_module_str_in_state_dict(torch.load(str(output_path + "/ml_model_latest.pt")))) 
+        netML.load_state_dict(remove_module_str_in_state_dict(torch.load(str(output_path + "/ml_model_latest.pt")))) 
         print("LOAD MODEL SUCCESSFULLY")
         
     
@@ -98,7 +98,7 @@ if __name__ == '__main__':
         train_bar = tqdm(train_loader) 
     
         netG.train()
-        ml_model.train()        
+        netML.train()        
         
         for target in train_bar:                                                    
                                                      
@@ -119,9 +119,9 @@ if __name__ == '__main__':
             # Metric Learning
             ############################
             
-            ml_model.zero_grad()
-            ml_real_out = ml_model(real_img)
-            ml_fake_out = ml_model(fake_img)         
+            netML.zero_grad()
+            ml_real_out = netML(real_img)
+            ml_fake_out = netML(fake_img)         
 #             print(ml_real_out.size())
 #             print(ml_fake_out.size())            
             
@@ -171,6 +171,6 @@ if __name__ == '__main__':
         
 # 	#----------------------Save model----------------------
         torch.save(netG.state_dict(), str(output_path  +'/' + "generator_{}.pt").format(epoch))
-        torch.save(ml_model.state_dict(), str(output_path  +'/' + "ml_model_{}.pt").format(epoch))
+        torch.save(netML.state_dict(), str(output_path  +'/' + "ml_model_{}.pt").format(epoch))
         torch.save(netG.state_dict(), str(output_path  +'/' + "generator_latest.pt"))
-        torch.save(ml_model.state_dict(), str(output_path  +'/' + "ml_model_latest.pt"))
+        torch.save(netML.state_dict(), str(output_path  +'/' + "ml_model_latest.pt"))
