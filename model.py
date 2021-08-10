@@ -31,9 +31,9 @@ class Generator64(nn.Module):
         return img
     
     
-class Discriminator64(nn.Module):
+class ML64(nn.Module):
     def __init__(self, out_dim):
-        super(Discriminator64, self).__init__()
+        super(ML64, self).__init__()
         dim = 32
 
         self.image_to_features = nn.Sequential(
