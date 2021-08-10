@@ -18,7 +18,7 @@ from torch import autograd
 
 from data_utils import *
 from loss import *
-from model import Generator64, Discriminator64
+from model import Generator64, ML64
 
 
 parser = argparse.ArgumentParser(description='Train Image Generation Models')
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     optimizerG = optim.Adam(netG.parameters(), lr = learning_rate, betas=(beta1,beta2),eps= 1e-6) 
     
     # ML
-    ml_model = Discriminator64(out_dim=out_dim).to(device)      
+    ml_model = ML64(out_dim=out_dim).to(device)      
     optimizerML = optim.Adam(ml_model.parameters(), lr = learning_rate, betas=(0.5,0.999),eps= 1e-3)   
 
     # Losses    
@@ -149,7 +149,7 @@ if __name__ == '__main__':
             optimizerG.step()
 
             triplet_loss = triplet_(ml_real_out,ml_real_out_shuffle,ml_fake_out_shuffle)
-            triplet_loss.backward(retain_graph=True)
+            triplet_loss.backward()
             optimizerML.step()    
 
 
