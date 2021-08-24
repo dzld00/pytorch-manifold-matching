@@ -46,6 +46,10 @@ To train a model for unconditonal generation, run:
 ```
 python train.py
 ```
+We also tried our objective on generating higher resolution images using [StyleGAN2](https://github.com/rosinality/stylegan2-pytorch) generator. Below are randomly generated samples on 512x512 [FFHQ](https://github.com/NVlabs/ffhq-dataset) dataset at ~150K iterations:
+<p align="center">
+<img src="/images/144300.png" align="middle" width="800">
+</p>
 
 # Citation
 ```
