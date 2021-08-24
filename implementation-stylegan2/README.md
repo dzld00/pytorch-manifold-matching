@@ -1,4 +1,4 @@
-For implementation using a [StyleGAN2](https://arxiv.org/abs/1912.04958) data generator, please follow the instruction in [this repository](https://github.com/rosinality/stylegan2-pytorch) except that necessary changes are made in train_MvM.py to implement MvM objective functions.
+For implementation using a [StyleGAN2](https://arxiv.org/abs/1912.04958) data generator, please follow the instruction in [this repository](https://github.com/rosinality/stylegan2-pytorch) except that necessary changes are made in train_MvM.py to use MvM objective functions.
 If you find this implementation useful, please also cite
 ```
 @InProceedings{Karras_2020_CVPR,
