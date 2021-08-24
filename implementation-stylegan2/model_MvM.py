@@ -703,19 +703,18 @@ class ML512(nn.Module):
     def __init__(self, out_dim):
         super(ML512, self).__init__()
         dim = 32
-        rate = 0.2
 
         self.image_to_features = nn.Sequential(
             nn.Conv2d(3, dim, 4, 2, 1),           
-            nn.LeakyReLU(rate),
+            nn.LeakyReLU(0.2),
             nn.Conv2d(dim, 2 * dim, 4, 2, 1),          
-            nn.LeakyReLU(rate),
+            nn.LeakyReLU(0.2),
             nn.Conv2d(2 * dim, 4 * dim, 4, 2, 1),            
-            nn.LeakyReLU(rate),
+            nn.LeakyReLU(0.2),
             nn.Conv2d(4 * dim, 8 * dim, 4, 2, 1),           
-            nn.LeakyReLU(rate),
+            nn.LeakyReLU(0.2),
             nn.Conv2d(8 * dim, 16 * dim, 4, 2, 1),
-            nn.LeakyReLU(rate),
+            nn.LeakyReLU(0.2),
             nn.Conv2d(16 * dim, 32 * dim, 4, 2, 1),
             nn.LeakyReLU(0.2), 
             nn.Conv2d(32 * dim, 64 * dim, 4, 2, 1),
