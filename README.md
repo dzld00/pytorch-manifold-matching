@@ -37,12 +37,6 @@ p_dist =  torch.dist(pd_r,pd_f,2) # matching 2-diameters
 c_dist = torch.dist(ml_real_out.mean(0),ml_fake_out.mean(0),2) # matching centroids  
 ```
 
-# Dependencies
-- Pytorch 1.0.1
-
-# Dataset
-Download data to the data path. The sample code uses [CelebA](https://mmlab.ie.cuhk.edu.hk/projects/CelebA.html) dataset.
-
 # Training
 To train a model for unconditonal generation, run:
 
@@ -61,11 +55,12 @@ We also tried our objective on generating higher resolution images using a [Styl
 
 # Citation
 ```
-@misc{daiandhang2021manifold,
-      title={Manifold Matching via Deep Metric Learning for Generative Modeling}, 
-      author={Mengyu Dai and Haibin Hang},
-      year={2021},
-      eprint={2106.10777},
-      archivePrefix={arXiv}
+@InProceedings{Dai_2021_ICCV,
+    author    = {Dai, Mengyu and Hang, Haibin},
+    title     = {Manifold Matching via Deep Metric Learning for Generative Modeling},
+    booktitle = {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
+    month     = {October},
+    year      = {2021},
+    pages     = {6587-6597}
 }
 ```
