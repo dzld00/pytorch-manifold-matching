@@ -119,38 +119,41 @@ if __name__ == '__main__':
             # Metric Learning
             ############################
             
-            netML.zero_grad()
-            ml_real_out = netML(real_img)
-            ml_fake_out = netML(fake_img)         
-#             print(ml_real_out.size())
-#             print(ml_fake_out.size())            
+            netML.zero_grad()   
+            fake_img = netG(z) 
+            ml_real_out, _ = netML(real_img)
+            ml_fake_out, _ = netML(fake_img)
             
-            if ml_real_out.size()[-1] == 1:
-                ml_real_out = ml_real_out.squeeze(-1).squeeze(-1)
-                ml_fake_out = ml_fake_out.squeeze(-1).squeeze(-1)
+            r1=torch.randperm(batch_size)
+            r2=torch.randperm(batch_size)
+            ml_real_out_shuffle = ml_real_out[r1[:, None]].view(ml_real_out.shape[0],ml_real_out.shape[-1])
+            ml_fake_out_shuffle = ml_fake_out[r2[:, None]].view(ml_fake_out.shape[0],ml_fake_out.shape[-1])                
+
+            ############################
+            
+            pd_r = pairwise_distances(ml_real_out, ml_real_out) 
+            pd_f = pairwise_distances(ml_fake_out, ml_fake_out)
+        
+            p_dist =  torch.dist(pd_r,pd_f,2)   
+            c_dist = torch.dist(ml_real_out.mean(0),ml_fake_out.mean(0),2)      
+
+            g_loss = p_dist + c_dist 
+            netG.zero_grad()
+            g_loss.backward()                        
+            optimizerG.step()
+            
+            fake_img = netG(z) 
+            ml_real_out = netML(real_img)
+            ml_fake_out = netML(fake_img.detach())           
             
             r1=torch.randperm(batch_size)
             r2=torch.randperm(batch_size)
             ml_real_out_shuffle = ml_real_out[r1[:, None]].view(ml_real_out.shape[0],ml_real_out.shape[-1])
             ml_fake_out_shuffle = ml_fake_out[r2[:, None]].view(ml_fake_out.shape[0],ml_fake_out.shape[-1])
-                
-            ############################
-            netG.zero_grad()
 
-            pd_r = pairwise_distances(ml_real_out, ml_real_out) 
-            pd_f = pairwise_distances(ml_fake_out, ml_fake_out)
-        
-            p_dist =  torch.dist(pd_r,pd_f,2)             
-            c_dist = torch.dist(ml_real_out.mean(0),ml_fake_out.mean(0),2)         
-        
-            #############################
-            g_loss = p_dist + c_dist   
-            g_loss.backward(retain_graph=True)                        
-            optimizerG.step()
-
-            triplet_loss = triplet_(ml_real_out,ml_real_out_shuffle,ml_fake_out_shuffle)
-            triplet_loss.backward()
-            optimizerML.step()    
+            ml_loss = triplet_(ml_real_out,ml_real_out_shuffle,ml_fake_out_shuffle) 
+            ml_loss.backward()
+            optimizerML.step()  
 
 
             train_bar.set_description(desc='[%d/%d]' % (epoch, NUM_EPOCHS))
@@ -174,95 +177,4 @@ if __name__ == '__main__':
         torch.save(netML.state_dict(), str(output_path  +'/' + "ml_model_{}.pt").format(epoch))
         torch.save(netG.state_dict(), str(output_path  +'/' + "generator_latest.pt"))
         torch.save(netML.state_dict(), str(output_path  +'/' + "ml_model_latest.pt"))
-        
-################################################################## 
-### The above code is for reproducing results in PyTorch 1.0. For PyTorch with higher versions, one can try replace the main body as follows:
-# 1.  Like in implementation-stylegan2/train_MvM.py:
-
-#             requires_grad(netG, False)
-#             requires_grad(netML, True)                
-                
-#             z = torch.randn(batch_size, 128, 1, 1).to(device)          
-#             z.requires_grad_(True)            
-
-#             fake_img = netG(z)
-#             ml_real_out = netML(real_img)
-#             ml_fake_out = netML(fake_img)         
-            
-#             r1=torch.randperm(batch_size)
-#             r2=torch.randperm(batch_size)
-#             ml_real_out_shuffle = ml_real_out[r1[:, None]].view(ml_real_out.shape[0],ml_real_out.shape[-1])
-#             ml_fake_out_shuffle = ml_fake_out[r2[:, None]].view(ml_fake_out.shape[0],ml_fake_out.shape[-1])
-            
-#             triplet_loss = triplet_(ml_real_out,ml_real_out_shuffle,ml_fake_out_shuffle)     
-#             netML.zero_grad()
-#             triplet_loss.backward()
-#             optimizerML.step() 
-            
-#             ############################            
-#             requires_grad(netG, True)
-#             requires_grad(netML, False)            
-            
-#             fake_img = netG(z)            
-#             ml_real_out = netML(real_img)
-#             ml_fake_out = netML(fake_img)                  
-            
-#             r1=torch.randperm(batch_size)
-#             r2=torch.randperm(batch_size)
-#             ml_real_out_shuffle = ml_real_out[r1[:, None]].view(ml_real_out.shape[0],ml_real_out.shape[-1])
-#             ml_fake_out_shuffle = ml_fake_out[r2[:, None]].view(ml_fake_out.shape[0],ml_fake_out.shape[-1])
-                
-#             ############################
-
-#             pd_r = pairwise_distances(ml_real_out, ml_real_out) 
-#             pd_f = pairwise_distances(ml_fake_out, ml_fake_out)
-        
-#             p_dist =  torch.dist(pd_r,pd_f,2)             
-#             c_dist = torch.dist(ml_real_out.mean(0),ml_fake_out.mean(0),2)         
-        
-#             #############################
-#             g_loss = p_dist + c_dist   
-#             netG.zero_grad()            
-#             g_loss.backward()                        
-#             optimizerG.step()
-
-
-
-# OR 
-# 2. Tested with PytTorch 1.7.1:
-#             netML.zero_grad()   
-#             fake_img = netG(z) 
-#             ml_real_out, _ = netML(real_img)
-#             ml_fake_out, _ = netML(fake_img)
-            
-#             r1=torch.randperm(batch_size)
-#             r2=torch.randperm(batch_size)
-#             ml_real_out_shuffle = ml_real_out[r1[:, None]].view(ml_real_out.shape[0],ml_real_out.shape[-1])
-#             ml_fake_out_shuffle = ml_fake_out[r2[:, None]].view(ml_fake_out.shape[0],ml_fake_out.shape[-1])                
-
-#             ############################
-            
-#             pd_r = pairwise_distances(ml_real_out, ml_real_out) 
-#             pd_f = pairwise_distances(ml_fake_out, ml_fake_out)
-        
-#             p_dist =  torch.dist(pd_r,pd_f,2)   
-#             c_dist = torch.dist(ml_real_out.mean(0),ml_fake_out.mean(0),2)      
-
-#             g_loss = p_dist + c_dist 
-#             netG.zero_grad()
-#             g_loss.backward()                        
-#             optimizerG.step()
-            
-#             fake_img = netG(z) 
-#             ml_real_out = netML(real_img)
-#             ml_fake_out = netML(fake_img.detach())           
-            
-#             r1=torch.randperm(batch_size)
-#             r2=torch.randperm(batch_size)
-#             ml_real_out_shuffle = ml_real_out[r1[:, None]].view(ml_real_out.shape[0],ml_real_out.shape[-1])
-#             ml_fake_out_shuffle = ml_fake_out[r2[:, None]].view(ml_fake_out.shape[0],ml_fake_out.shape[-1])
-
-#             ml_loss = triplet_(ml_real_out,ml_real_out_shuffle,ml_fake_out_shuffle) 
-#             ml_loss.backward()
-#             optimizerML.step()
-
+       
